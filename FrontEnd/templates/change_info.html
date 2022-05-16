@@ -27,6 +27,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
        type:"get",
        // url
        url:"http://127.0.0.1:8000/v1/users/"+ username,
+
        beforeSend: function(request) {
            request.setRequestHeader("Authorization", token);
        },
@@ -152,7 +153,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
         $.ajax({
         // 请求方式
         type:"put",
-        // contentType 
+        // contentType
         contentType:"application/json",
         // dataType
         dataType:"json",
@@ -165,7 +166,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
             request.setRequestHeader("Authorization", token);
         },
         success:function (result) {
-            if (200 == result.code){
+            if (200 === result.code){
 
                 console.log(result.data.nickname)
                 console.log(result.data.sign)

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include  # 引入include, 用于引入子路由
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test_cors', views.test_cors),
     path('v1/users', user_views.UserViews.as_view()),
+    path('v1/users/', include('user.urls')),  # 有斜杠结尾的说明后面还有部分路由
     path('v1/tokens', dtoken_views.tokens)
 ]
 

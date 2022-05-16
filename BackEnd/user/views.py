@@ -9,8 +9,20 @@ from user.models import UserProfile
 
 
 class UserViews(View):
-	# def get(self, request):
-	# 	return JsonResponse({'code':200, 'msg': 'test'})
+	def get(self, request, username=None):
+		if username:
+			# /v1/users/guoxiaonao,拿到指定用户的的信息
+			try:
+				user = UserProfile.objects.get(username=username)
+			except Exception as e:
+				result = {'code': 10102, 'error': 'The username is wrong'}  # username是主键，查不到肯定是没有这个用户
+				return JsonResponse(result)
+			result = {'code': 200, 'username': username, 'data': {'info': user.info, 'sign': user.sign, 'nickname': user.nickname, 'avatar': str(user.avatar)}}
+			return JsonResponse(result)
+		else:
+			# /v1/users,拿到所有用户的信息
+			pass
+		return JsonResponse({'code':200, 'msg': 'test'})
 
 	def post(self, request):
 		json_str = request.body
@@ -42,3 +54,36 @@ class UserViews(View):
 		# 如果参数检查通过并存储完成
 		result = {'code': 200, 'username': username, 'data': {}}
 		return JsonResponse(result)
+
+	def put(self, request, username=None):
+		# 更新用户数据[昵称，个人签名，个人描述等]
+		json_str = request.body
+		json_obj = json.loads(json_str)
+
+		try:
+			user = UserProfile.objects.get(username=username)
+		except Exception as e:
+			result = {'code': 10105, 'error': 'The username is error'}
+			return JsonResponse(result)
+		user.sign = json_obj['sign']
+		user.info = json_obj['info']
+		user.nickname = json_obj['nickname']
+		user.save()
+		return JsonResponse({'code': 200})
+
+
+
+def user_views(request, username):  # 改头像
+	if request.method != 'POST':
+		result = {'code': 10103, 'error': 'Please use POST'}
+		return JsonResponse(result)
+	try:
+		user = UserProfile.objects.get(username=username)
+	except Exception as e:
+		result = {'code': 10104, 'error': 'The username is error'}
+		return JsonResponse(result)
+
+	avatar = request.FILES['avatar']  # 拿前端传过来的头像数据
+	user.avatar = avatar
+	user.save()
+	return JsonResponse({'code': 200})

@@ -41,12 +41,12 @@ A ny individuals and organizations and not for commercial use, professiona websi
 				url:"http://127.0.0.1:8000/v1/tokens",
 				type:"post",
 				dataType:"json",
-				data:JSON.stringify(post_message),	//前端向后端传递json对象时一定要序列化，传递json串
-				contentType:"application/json",//告诉后端前端传递的是json数据
+				data:JSON.stringify(post_message),	//前端向后端传递json对象时一定要序列化，转成json串
+				contentType:"application/json",//告诉后端前端要的是json数据
 				success:function (res){
 					if(res.code==200){
-						// window.localStorage.setItem("my_blog_token",res.data.token)
-						// window.localStorage.setItem("my_blog_username",res.username)
+						window.localStorage.setItem("my_blog_token",res.data.token)
+						window.localStorage.setItem("my_blog_username",res.username)
 						alert("登陆成功");
 					}else{
 						alert(res.error);
