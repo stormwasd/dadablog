@@ -13,7 +13,7 @@ from django.http import JsonResponse
 from django.conf import settings
 import jwt
 
-from BackEnd.user.models import UserProfile
+from user.models import UserProfile
 
 
 def login_decrator(func):

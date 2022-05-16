@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views import View
 # Create your views here.
 from user.models import UserProfile
+from tools.login_decrator import login_decrator
 
 
 class UserViews(View):
@@ -72,16 +73,18 @@ class UserViews(View):
 		return JsonResponse({'code': 200})
 
 
-
-def user_views(request, username):  # 改头像
+@login_decrator
+def user_views(request):  # 改头像
 	if request.method != 'POST':
 		result = {'code': 10103, 'error': 'Please use POST'}
 		return JsonResponse(result)
-	try:
-		user = UserProfile.objects.get(username=username)
-	except Exception as e:
-		result = {'code': 10104, 'error': 'The username is error'}
-		return JsonResponse(result)
+	# 使用装饰器就不用下面的orm操作了
+	# try:
+	# 	user = UserProfile.objects.get(username=username)
+	# except Exception as e:
+	# 	result = {'code': 10104, 'error': 'The username is error'}
+	# 	return JsonResponse(result)
+	user = request.myuser
 
 	avatar = request.FILES['avatar']  # 拿前端传过来的头像数据
 	user.avatar = avatar
