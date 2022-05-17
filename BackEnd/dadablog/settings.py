@@ -146,3 +146,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 JWT_TOKEN_KEY = '123456'
+
+CACHE = {
+	'default': {
+		'BACKEND': 'django_redis.cache.RedisCache',
+		'LOCATION': 'redis://127.0.0.1:6379',
+		'OPTIONS': {
+			'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+			# 'PASSWORD': '123456'  # 如果有密码就加上密码
+		}
+	}
+}

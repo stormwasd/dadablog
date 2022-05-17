@@ -1,8 +1,9 @@
 import hashlib
 import json
-
+import random
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import View
 # Create your views here.
 from user.models import UserProfile
@@ -55,17 +56,18 @@ class UserViews(View):
 		# 如果参数检查通过并存储完成
 		result = {'code': 200, 'username': username, 'data': {}}
 		return JsonResponse(result)
-
+	@method_decorator(login_decrator)
 	def put(self, request, username=None):
 		# 更新用户数据[昵称，个人签名，个人描述等]
 		json_str = request.body
 		json_obj = json.loads(json_str)
-
-		try:
-			user = UserProfile.objects.get(username=username)
-		except Exception as e:
-			result = {'code': 10105, 'error': 'The username is error'}
-			return JsonResponse(result)
+		# 使用装饰器就不用下面的orm操作了
+		# try:
+		# 	user = UserProfile.objects.get(username=username)
+		# except Exception as e:
+		# 	result = {'code': 10105, 'error': 'The username is error'}
+		# 	return JsonResponse(result)
+		user = request.myuser
 		user.sign = json_obj['sign']
 		user.info = json_obj['info']
 		user.nickname = json_obj['nickname']
@@ -89,4 +91,20 @@ def user_views(request):  # 改头像
 	avatar = request.FILES['avatar']  # 拿前端传过来的头像数据
 	user.avatar = avatar
 	user.save()
+	return JsonResponse({'code': 200})
+
+
+def sms_view(request):
+	if request.method != 'POST':
+		result = {'code': 10108, 'error': 'Please use POST'}
+		return JsonResponse(result)
+	json_str = request.body
+	json_odj = json.loads(json_str)
+	phone = json_odj['phone']
+
+	# 生成随机数
+	code = random.randint(1000, 9999)  # 4位数字
+	print('phone', phone, 'code', code)
+	# 存储随机码, 用django-redis(django缓存和redis给融合在一起)，之前django项目的缓存是用mysql的一张表进行存储，但在这个项目不适用
+	# 发送随机码 -> 短信
 	return JsonResponse({'code': 200})
