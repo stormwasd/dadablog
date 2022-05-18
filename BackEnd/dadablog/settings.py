@@ -147,13 +147,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 JWT_TOKEN_KEY = '123456'
 
-CACHE = {
-	'default': {
-		'BACKEND': 'django_redis.cache.RedisCache',
-		'LOCATION': 'redis://127.0.0.1:6379',
-		'OPTIONS': {
-			'CLIENT_CLASS': 'django_redis.client.DefaultClient'
-			# 'PASSWORD': '123456'  # 如果有密码就加上密码
-		}
-	}
+# 设置redis缓存
+# CACHES = {
+# 	'default': {
+# 		'BACKEND': 'django_redis.cache.RedisCache',
+# 		'LOCATION': 'redis://127.0.0.1:6379/0',
+# 		'OPTIONS': {
+# 			"CLIENT_CLASS": "django_redis.client.DefaultClient"
+# 			# 'PASSWORD': '123456'  # 如果有密码就加上密码
+# 		}
+# 	}
+# }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # 这里指定为1库
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+            # 'CONNECTIO_POOL_KWARGS': {'max_connections': 100}
+        }
+    }
 }

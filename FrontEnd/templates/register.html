@@ -93,11 +93,11 @@ A ny individuals and organizations and not for commercial use, professiona websi
 	function register(){
 		var username=$('.username').val()
 		var email=$('.email').val()
-		// var sms_num=$('.sms_num').val()
+		var sms_num=$('.sms_num').val()
 		var password_1=$(".password_1").val()
 		var password_2=$(".password_2").val()
 		var phone=$('.phone').val()
-		var post_message={"username":username,"email":email,"phone":phone,"password_1":password_1,"password_2":password_2}
+		var post_message={"username":username,"email":email,"phone":phone,"password_1":password_1,"password_2":password_2, 'sms_num': sms_num}
 		console.log(post_message.username)
 		$.ajax({
 			url:"http://127.0.0.1:8000/v1/users",
