@@ -16,6 +16,19 @@ from user.models import UserProfile
 
 class TopicViews(View):
 
+	def make_topic_res(self, author, author_topic):
+		"""
+		:param author:
+		:param author_topic:
+		:return:
+		"""
+		res = {'code': 200, 'data': {}}
+		res['data']['nickname'] = author.nickname
+		res['data']['title'] = author_topic.title
+		res['data']['category'] = author_topic.category
+		res['data']['created_time'] = author_topic.create_time.strftime()
+
+
 	def make_topics_res(self, author, author_topics):
 		"""
 		:return: 返回列表页数据
@@ -81,14 +94,15 @@ class TopicViews(View):
 				except Exception as e:
 					result = {'code': 10302, 'error': 'No topic'}
 					return JsonResponse(result)
-			else:
+			else:  # 非博客只能访问public
 				try:
 					author_topic = Topic.objects.get(id=t_id, author_id=author_id, limit='public')
 				except Exception as e:
 					result = {'code': 10303, 'error': 'No topic'}
 					return JsonResponse(result)
 
-			res = self.make_topic_res(t_id)
+			res = self.make_topic_res(author, author_topic)
+			return JsonResponse(res)
 
 		else:
 			# 获取列表页数据
