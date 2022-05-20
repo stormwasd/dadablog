@@ -3,7 +3,10 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 from django.utils.decorators import method_decorator  # 把原来的函数装饰器转换下
+from django.views.decorators.cache import cache_page
+
 from tools.login_decrator import login_decrator, get_user_by_request
+from tools.cache_dec import cache_set
 
 # 异常码 10300-10399
 
@@ -16,17 +19,41 @@ from user.models import UserProfile
 
 class TopicViews(View):
 
-	def make_topic_res(self, author, author_topic):
+	def make_topic_res(self, author, author_topic, is_self):
 		"""
 		:param author:
 		:param author_topic:
 		:return:
 		"""
+
+		if is_self:
+			# 博主访问自己
+			next_topic = Topic.objects.filter(id__gt=author_topic.id, author=author).first()  # .first()方法就把数据从小到大排列并取第一个
+			last_topic = Topic.objects.filter(id__lt=author_topic.id, author=author).last()  # .last()方法就把数据从大到小排列并取第一个
+		else:
+			# 访客访问
+			next_topic = Topic.objects.filter(id__gt=author_topic.id,
+											  author=author, limit='public').first()  # .first()方法就把数据从小到大排列并取第一个
+			last_topic = Topic.objects.filter(id__lt=author_topic.id, author=author, limit='public').last()  # .last()方法就把数据从大到小排列并取第一个
+		next_id = next_topic.id if next_topic else None
+		next_title = next_topic.title if next_topic else ''
+		last_id = last_topic.id if last_topic else None
+		last_title = last_topic.title if last_topic else ''
 		res = {'code': 200, 'data': {}}
 		res['data']['nickname'] = author.nickname
 		res['data']['title'] = author_topic.title
 		res['data']['category'] = author_topic.category
-		res['data']['created_time'] = author_topic.create_time.strftime()
+		res['data']['created_time'] = author_topic.create_time.strftime('%Y-%m-%d %H:%M:%S')
+		res['data']['content'] = author_topic.content
+		res['data']['introduce'] = author_topic.introduce
+		res['data']['author'] = author.nickname
+		res['data']['last_id'] = last_id
+		res['data']['last_title'] = last_title
+		res['data']['next_id'] = next_id
+		res['data']['next_title'] = next_title
+		res['data']['messages'] = []
+		res['data']['messages_count'] = 0
+		return res
 
 
 	def make_topics_res(self, author, author_topics):
@@ -71,7 +98,9 @@ class TopicViews(View):
 							 author=author)
 		return JsonResponse({'code': 200})
 
+	@method_decorator(cache_set(30))
 	def get(self, request, author_id):
+		print('......view...in......')
 		try:
 			author = UserProfile.objects.get(username=author_id)
 		except Exception as e:
@@ -88,20 +117,22 @@ class TopicViews(View):
 			# /v1/topics/storm?t_id=1
 			# 获取指定文章数据
 			t_id = int(t_id)
+			is_self = False
 			if visitor_username == author_id:
+				is_self = True
 				try:
 					author_topic = Topic.objects.get(id=t_id, author_id=author_id)
 				except Exception as e:
 					result = {'code': 10302, 'error': 'No topic'}
 					return JsonResponse(result)
-			else:  # 非博客只能访问public
+			else:  # 非博主只能访问public
 				try:
 					author_topic = Topic.objects.get(id=t_id, author_id=author_id, limit='public')
 				except Exception as e:
 					result = {'code': 10303, 'error': 'No topic'}
 					return JsonResponse(result)
 
-			res = self.make_topic_res(author, author_topic)
+			res = self.make_topic_res(author, author_topic, is_self)
 			return JsonResponse(res)
 
 		else:

@@ -26,8 +26,8 @@ A ny individuals and organizations and not for commercial use, professiona websi
 </body>
 
 <script>
-    token = window.localStorage.getItem('dnblog_token');
-    username = window.localStorage.getItem('dnblog_user');
+    token = window.localStorage.getItem('my_blog_token');
+    username = window.localStorage.getItem('my_blog_username');
     var url = document.location.toString();
     var arrUrl = url.split("//");
     //当前访问的博客博主
@@ -46,7 +46,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
         // url
         url: get_url,
         beforeSend: function(request) {
-            request.setRequestHeader("Authorization", token);
+            request.setRequestHeader("AUTHORIZATION", token);
         },
         success:function (result) {
             if (200 == result.code){
@@ -177,7 +177,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
                     data:JSON.stringify(post_data),
                     // result 为请求的返回结果对象
                     beforeSend: function(request) {
-                      request.setRequestHeader("Authorization", token);
+                      request.setRequestHeader("AUTHORIZATION", token);
                     },
                     success:function (result) {
                         if (200 == result.code){
@@ -217,7 +217,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
                         data:JSON.stringify(post_data),
                         // result 为请求的返回结果对象
                         beforeSend: function(request) {
-                          request.setRequestHeader("Authorization", token);
+                          request.setRequestHeader("AUTHORIZATION", token);
                         },
                         success:function (result) {
                             if (200 == result.code){

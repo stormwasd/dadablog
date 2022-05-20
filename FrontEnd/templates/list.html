@@ -52,7 +52,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
         // url
         url: get_url,
         beforeSend: function(request) {
-            request.setRequestHeader("Authorization", token);
+            request.setRequestHeader("AUTHORIZATION", token);
         },
         success:function (result) {
             if (200 == result.code){
@@ -136,7 +136,7 @@ A ny individuals and organizations and not for commercial use, professiona websi
                         type:"delete",
                         url: delete_url,
                         beforeSend: function(request) {
-                            request.setRequestHeader("Authorization", token);
+                            request.setRequestHeader("AUTHORIZATION", token);
                         },
                         success:function (result) {
                             if (200 == result.code){
