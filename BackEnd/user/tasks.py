@@ -10,19 +10,6 @@
 @reason      : 
 """
 
-import hashlib
-import re
-import urllib
-import scrapy
-import asyncio
-import datetime
-import os
-import traceback
-import json
-from scrapy.utils import request
-from lxml import etree
-from scrapy.utils.project import get_project_settings
-from pybase.util import send_file
 
 from tools.sms import YunTongXin
 from dadablog.celery import app
